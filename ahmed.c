@@ -43,14 +43,16 @@ void setup_environment() {
     system("sudo chown root:moderators /social_media/moderators/archive");
     system("sudo chmod 770 /social_media/moderators/archive");
 
+    system("sudo chown root:moderators /social_media/moderators/flagged");
+    system("sudo sudo chmod 770 /social_media/moderators/flagged");
     // Flagged posts
-    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post1");
+    // system("sudo chown root:moderators /social_media/moderators/flagged_post1");
     // system("sudo chmod 770 /social_media/moderators/flagged_post1");
 
-    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post2");
+    // system("sudo chown root:moderators /social_media/moderators/flagged_post2");
     // system("sudo chmod 770 /social_media/moderators/flagged_post2");
 
-    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post3");
+    // system("sudo chown root:moderators /social_media/moderators/flagged_post3");
     // system("sudo chmod 770 /social_media/moderators/flagged_post3");
 
     // User directories
@@ -87,16 +89,16 @@ void change_permissions() {
     printf("Which post you want to change it's Permissions: ");
     scanf("%d", &choice);
     if(choice == 1){
-        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post1");
-        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post1");
+        system("sudo chown admin1 /social_media/moderators/flagged_post1.txt");
+        system("sudo chmod 700 /social_media/moderators/flagged_post1.txt");
         printf("Permissions Changed to Admin Only");
     }else if(choice == 2){
-        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post2");
-        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post2");
+        system("sudo chown admin1 /social_media/moderators/flagged_post2.txt");
+        system("sudo chmod 700 /social_media/moderators/flagged_post2.txt");
         printf("Permissions Changed to Admin Only");
     }else if(choice == 3){
-        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post3");
-        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post3");
+        system("sudo chown admin1 /social_media/moderators/flagged_post3.txt");
+        system("sudo chmod 700 /social_media/moderators/flagged_post3.txt");
         printf("Permissions Changed to Admin Only");
     }else
         printf("Invalid Input..");
@@ -175,7 +177,7 @@ void move_files() {
         printf("Enter your choice: ");
         scanf("%d", &num);
         if(num == 1){
-            system("mv /social_media/users/user1/comment1.txt /social_media/moderators/flagged/flagged_post1");
+            system("mv /social_media/users/user1/comment1.txt /social_media/moderators/flagged_post1.txt");
             printf("Moved to Flagged Successfully");
         }else if(num == 0)
             printf("Exiting...");
@@ -188,7 +190,7 @@ void move_files() {
         printf("Enter your choice: ");
         scanf("%d", &num);
         if(num == 1){
-            system("mv /social_media/users/user1/comment2.txt /social_media/moderators/flagged/flagged_post2");
+            system("mv /social_media/users/user1/comment2.txt /social_media/moderators/flagged_post2.txt");
             printf("Moved to Flagged Successfully");
         }else if(num == 0)
             printf("Exiting...");
@@ -201,7 +203,7 @@ void move_files() {
         printf("Enter your choice: ");
         scanf("%d", &num);
         if(num == 1){
-            system("mv /social_media/users/user1/comment3.txt /social_media/moderators/flagged/flagged_post3");
+            system("mv /social_media/users/user1/comment3.txt /social_media/moderators/flagged_post3.txt");
             printf("Moved to Flagged Successfully");
         }else if(num == 0)
             printf("Exiting...");
