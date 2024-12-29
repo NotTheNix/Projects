@@ -28,26 +28,34 @@ void setup_environment() {
     // Assign users to groups
     system("sudo usermod -aG admin admin1");
     system("sudo usermod -aG moderators moderators1");
+    system("sudo usermod -aG moderators admin1");
     system("sudo usermod -aG users user1");
-    system("sudo usermod -aG users user2");
-
+    
     // Set ownership and permissions
     system("sudo chown root:admin /social_media/admin");
     system("sudo chmod 700 /social_media/admin");
 
+    // Moderators directory
     system("sudo chown root:moderators /social_media/moderators");
     system("sudo chmod 770 /social_media/moderators");
+
+    // Archive inside moderators directory
     system("sudo chown root:moderators /social_media/moderators/archive");
     system("sudo chmod 770 /social_media/moderators/archive");
 
-    // system("sudo chown root:moderators /social_media/moderators/flagged");
-    // system("sudo chmod 770 /social_media/moderators/flagged");
+    // Flagged posts
+    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post1");
+    // system("sudo chmod 770 /social_media/moderators/flagged_post1");
 
-    system("sudo chown user1:users /social_media/users/user1");
+    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post2");
+    // system("sudo chmod 770 /social_media/moderators/flagged_post2");
+
+    // system("sudo chown admin1:moderators /social_media/moderators/flagged_post3");
+    // system("sudo chmod 770 /social_media/moderators/flagged_post3");
+
+    // User directories
+    system("sudo chown root:user1 /social_media/users/user1");
     system("sudo chmod 700 /social_media/users/user1");
-
-    system("sudo chown user2:users /social_media/users/user2");
-    system("sudo chmod 700 /social_media/users/user2");
 
     printf("Environment setup complete.\n");
 }
@@ -69,57 +77,148 @@ void list_files(char *role) {
     }
 }
 
-
 // 2. Change permissions of files/directories
 void change_permissions() {
+    int choice;
     printf("2. Changing Permissions:\n");
-    system("sudo chmod 750 /social_media/admin");
-    system("sudo chmod 770 /social_media/moderators");
-    system("sudo chmod 700 /social_media/users/user1");
-    system("sudo chmod 700 /social_media/users/user2");
+    printf("1. Flag Post1\n");
+    printf("2. Flag Post2\n");
+    printf("3. Flag Post3\n");
+    printf("Which post you want to change it's Permissions: ");
+    scanf("%d", &choice);
+    if(choice == 1){
+        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post1");
+        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post1");
+        printf("Permissions Changed to Admin Only");
+    }else if(choice == 2){
+        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post2");
+        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post2");
+        printf("Permissions Changed to Admin Only");
+    }else if(choice == 3){
+        system("sudo chown admin1 /social_media/moderators/flagged/flagged_post3");
+        system("sudo chmod 700 /social_media/moderators/flagged/flagged_post3");
+        printf("Permissions Changed to Admin Only");
+    }else
+        printf("Invalid Input..");
 }
 
 // 3. Make/delete files/directories
-void manage_directories() {
+void make_delete_directories(){
+    int choice;
+    char command[512],path[256];
     printf("3. Managing Directories:\n");
-    system("sudo mkdir -p /social_media/moderators/flagged");
-    printf("Created directory /social_media/moderators/flagged\n");
-
-    system("sudo rm -rf /social_media/moderators/archive");
-    printf("Deleted directory /social_media/moderators/archive\n");
+    printf("1. Create\n");
+    printf("2. Delete\n");
+    printf("Enter your choice: ");
+    scanf("%d", &choice);
+    printf("Enter path to file/directory: ");
+    scanf("%s", path);
+    switch (choice){
+        case 1:
+            strcpy(command, "mkdir -p ");
+            strcat(command, path);
+            break;
+        case 2:
+            strcpy(command, "rm -rf ");
+            strcat(command, path);
+            break;
+        default:
+            printf("Invalid Input..");
+    }
+    system(command);
 }
 
 // 4. Create symbolic link files
 void create_symlink() {
     printf("4. Creating Symbolic Links:\n");
-    system("ln -s /social_media/admin /social_media/admin_policies");
-    printf("Created symbolic link /social_media/admin_policies pointing to /social_media/admin\n");
+    char path1[256],path2[256];
+    char command[512] = "ln -s ";
+    printf("Enter path to be Pointed At(Owner): ");
+    scanf("%s", path1);
+    strcat(command, path1);
+    strcat(command, " ");
+    getchar();
+    printf("Enter path to the Pointer file At(Shortcut): ");
+    scanf("%s", path2);
+    strcat(command, path2);
+    system(command);
+    printf("Created symbolic link '%s' pointing to '%s'\n", path2, path1);
 }
 
 // 5. Copy files/directories
-void copy_files() {
+void copy_files(char *role){
     printf("5. Copying Files:\n");
-    system("cp -r /social_media/moderators/flagged /social_media/moderators/archive");
-    printf("Copied flagged content to archive\n");
-
-    system("cp -r /social_media/users/user1 /social_media/users/user1_backup");
+    if(role == "admin1"){
+        system("cp -r /social_media/moderators/flagged /social_media/moderators/archive");
+        printf("Copied flagged content to archive\n");
+    }if(role == "user1"){
+        system("cp -r /social_media/users/user1 /social_media/users/user1_backup");
     printf("Copied user1 posts to user1_backup\n");
+    }
 }
 
 // 6. Move files/directories
 void move_files() {
     printf("6. Moving Files:\n");
-    system("mv /social_media/users/user1/comment.txt /social_media/moderators/flagged");
-    printf("Moved Comment to Flagged folder\n");
+    int num;
+    int choice;
+    printf("Available Posts:\n");
+    printf("1. Post 1\n");
+    printf("2. Post 2\n");
+    printf("3. Post 3\n");
+    printf("Enter A Post to review: ");
+    scanf("%d", &choice);
+    if(choice == 1){
+        system("cat /social_media/users/user1/comment1.txt");
+        printf("Displayed entire comment1.txt\n");
+        printf("1. Move to Flagged\n0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &num);
+        if(num == 1){
+            system("mv /social_media/users/user1/comment1.txt /social_media/moderators/flagged/flagged_post1");
+            printf("Moved to Flagged Successfully");
+        }else if(num == 0)
+            printf("Exiting...");
+        else
+            printf("Invalid Input");
+    }else if(choice == 2){
+        system("cat /social_media/users/user1/comment2.txt");
+        printf("Displayed entire comment2.txt\n");
+        printf("1. Move to Flagged\n0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &num);
+        if(num == 1){
+            system("mv /social_media/users/user1/comment2.txt /social_media/moderators/flagged/flagged_post2");
+            printf("Moved to Flagged Successfully");
+        }else if(num == 0)
+            printf("Exiting...");
+        else
+            printf("Invalid Input");
+    }else if(choice == 3){
+        system("cat /social_media/users/user1/comment3.txt");
+        printf("Displayed entire comment3.txt\n");
+        printf("1. Move to Flagged\n0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &num);
+        if(num == 1){
+            system("mv /social_media/users/user1/comment3.txt /social_media/moderators/flagged/flagged_post3");
+            printf("Moved to Flagged Successfully");
+        }else if(num == 0)
+            printf("Exiting...");
+        else
+            printf("Invalid Input");
+    }else{
+        printf("Invalid Input..");
+    }
 }
 
 // 7. Use redirection to create or update files
-void redirect_to_file() {
-    printf("7. Using Redirection to Update Files:\n");
-
-    char comment[256]; // Increased size for flexibility
+void WComments(const int *post_choice) {
+    int Number = *post_choice;
+    char comment[256];
+    char command[512];
     printf("Enter your comment: ");
-    getchar(); // Clear leftover newline from previous input
+    getchar(); // Clear ay lefover mn el Pervious input
     if (fgets(comment, sizeof(comment), stdin) != NULL) {
         // Remove trailing newline if present
         size_t len = strlen(comment);
@@ -127,58 +226,152 @@ void redirect_to_file() {
             comment[len - 1] = '\0';
         }
 
-        // Construct the command
-        char command[300]; // Ensure enough space for the final command
+        // Start constructing the command
         strcpy(command, "echo ");
         strcat(command, comment);
-        strcat(command, " > /social_media/users/user1/comment.txt");
-
-        // Execute the command
+        strcat(command, " > /social_media/users/user1/comment");
+        
+        // Add the post number
+        char post_num[10];
+        sprintf(post_num, "%d", Number); // Convert the number to a string
+        strcat(command, post_num);
+        strcat(command, ".txt");
         system(command);
     } else {
         printf("Error reading input.\n");
     }
 }
+void redirect_to_file() {
+    printf("Using Redirection to Update Files:\n");
+    int post_choice;
+    printf("Available Posts:\n");
+    printf("1. Post 1\n");
+    printf("2. Post 2\n");
+    printf("3. Post 3\n");
+    printf("Enter the post number to comment on: ");
+    if (scanf("%d", &post_choice) == 1 && post_choice >= 1 && post_choice <= 3) {
+        WComments(&post_choice);
+    } else {
+        printf("Invalid input. Please enter a number between 1 and 3.\n");
+    }
+}
+
 // 8. Set and use aliases for common tasks
 void set_aliases() {
     printf("8. Setting Aliases:\n");
-    system("alias list_flagged='ls -l /social_media/moderators/flagged'");
-    system("alias view_activity='tail /var/log/activity.log'");
-    printf("Set aliases for listing flagged posts and viewing user activity\n");
+    int choice;
+    char alias_name[256];
+    char command1[512],command2[512];
+
+    printf("1. Create an alias for Flagged\n2. Call an Alias\nEnter your choice: ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        printf("Enter the alias name: ");
+        scanf("%s", alias_name);
+
+        // Construct the alias command
+        strcpy(command1, "alias ");
+        strcat(command1, alias_name);
+        strcat(command1, "='ls -l /social_media/moderators/flagged'");
+        
+        // Execute the alias command
+        system(command1);
+
+        printf("Alias '%s' created successfully.\n", alias_name);
+    } else if (choice == 2) {
+        system(command1);
+        printf("Enter the alias name to call: ");
+        scanf("%s", alias_name);
+
+        // Construct the system command to simulate calling the alias
+        strcpy(command2, alias_name);
+        system(command2);
+
+    } else {
+        printf("Invalid choice. Please select 1 or 2.\n");
+    }
 }
 
 // 9. View file content using cat, head, and tail
 void view_file_content() {
+    int choice,post_choice;
     printf("9. Viewing File Content:\n");
-    printf("1. View as Cat\n");
-    printf("2. View as Head\n");
-    printf("3. View as Tail\n");
-    printf("Enter your choice: ");
-    int choice;
-    scanf("%d", &choice);
+    printf("1.Post 1 \n");
+    printf("2.Post 2 \n");
+    printf("3.Post 3 \n");
+    printf("Enter the Post You Want to View: ");
+    scanf("%d", &post_choice);
+    if(post_choice == 1){
+        printf("1. View as Cat\n");
+        printf("2. View as Head\n");
+        printf("3. View as Tail\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-    if(choice == 1) {
-        system("cat /social_media/users/user1/comment.txt");
-        printf("Displayed entire comment.txt\n");
-    } else if(choice == 2) {
-        system("head -n 5 /social_media/users/user1/comment.txt");
-        printf("Displayed first 5 lines of comment.txt\n");
-    } else if(choice == 3) {
-        system("tail -n 5 /social_media/users/user1/comment.txt");
-        printf("Displayed last 5 lines of comment.txt\n");
+        if(choice == 1) {
+            system("cat /social_media/users/user1/comment1.txt");
+            printf("Displayed entire comment.txt\n");
+        } else if(choice == 2) {
+            system("head -n 5 /social_media/users/user1/comment1.txt");
+            printf("Displayed first 5 lines of comment.txt\n");
+        } else if(choice == 3) {
+            system("tail -n 5 /social_media/users/user1/comment1.txt");
+            printf("Displayed last 5 lines of comment.txt\n");
+        }else{
+            printf("Invalid Input");
+        }
+    }else if(post_choice == 2){
+        printf("1. View as Cat\n");
+        printf("2. View as Head\n");
+        printf("3. View as Tail\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        if(choice == 1) {
+            system("cat /social_media/users/user1/comment2.txt");
+            printf("Displayed entire comment.txt\n");
+        } else if(choice == 2) {
+            system("head -n 5 /social_media/users/user1/comment2.txt");
+            printf("Displayed first 5 lines of comment.txt\n");
+        } else if(choice == 3) {
+            system("tail -n 5 /social_media/users/user1/comment2.txt");
+            printf("Displayed last 5 lines of comment.txt\n");
+        }else{
+            printf("Invalid Input");
+        }
+    }else if(post_choice == 3){
+        printf("1. View as Cat\n");
+        printf("2. View as Head\n");
+        printf("3. View as Tail\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        if(choice == 1) {
+            system("cat /social_media/users/user1/comment3.txt");
+            printf("Displayed entire comment.txt\n");
+        } else if(choice == 2) {
+            system("head -n 5 /social_media/users/user1/comment3.txt");
+            printf("Displayed first 5 lines of comment.txt\n");
+        } else if(choice == 3) {
+            system("tail -n 5 /social_media/users/user1/comment3.txt");
+            printf("Displayed last 5 lines of comment.txt\n");
+        }else{
+            printf("Invalid Input");
+        }
     }else{
-        printf("Invalid Input");
+        printf("Invalid Input...");
     }
 }
 
-// 10. Find files or directories using find or grep
-void find_files() {
-    printf("10. Finding Files:\n");
-    system("find /social_media/users -name '*post*'");
-    printf("Searched for files containing 'post' in their names\n");
-
-    system("grep -ri 'violation' /social_media/moderators");
-    printf("Searched for 'violation' in moderator files\n");
+// 10. Find files or directories using find
+void findFiles(const char *directory, const char *pattern) {
+    char command[512] = "find ";
+    strcat(command, directory);
+    strcat(command, " -name \"");
+    strcat(command, pattern);
+    strcat(command, "\"");
+    system(command);
 }
 
 int authenticateAdmin() {
@@ -191,6 +384,7 @@ int authenticateAdmin() {
 int main(){
     setup_environment();
     printf("Welcome to the Social Media Platform\n");
+    char path[256], pattern[256];
     int choice1,choice2;
     char *role;
     // Role selection
@@ -224,13 +418,12 @@ int main(){
             exit(0);
     }
 
-
     while(1){
         printf("\n**Menu**\n");
         printf("1. Listing Files\n");
         if(role == "admin1"){
-            printf("2.Changing Permissions\n");
-            printf("4.Creating Symbolic Links\n");
+            printf("2. Changing Permissions\n");
+            printf("4. Creating Symbolic Links\n");
             printf("5. Copying Files\n");
         }
         if(role == "moderators1"  || role == "admin1"){
@@ -259,9 +452,9 @@ int main(){
                     printf("Invalid Input\n");
                 break;
             case 3:
-                if(role == "moderators1" ||  role == "admin1")
-                    manage_directories();
-                else
+                if(role == "moderators1" ||  role == "admin1"){
+                    make_delete_directories();
+                }else
                     printf("Invalid Input\n");
                 break;
             case 4:
@@ -272,7 +465,7 @@ int main(){
                 break;
             case 5:
                 if(role == "user1" || role == "admin1")
-                    copy_files();
+                    copy_files(role);
                 else
                     printf("Invalid Input\n");
                 break;
@@ -298,9 +491,13 @@ int main(){
                 view_file_content();
                 break;
             case 10:
-                if(role == "moderators1" || role == "admin1")
-                    find_files();
-                else
+                if(role == "moderators1" || role == "admin1"){
+                    printf("Enter directory to search: ");
+                    scanf("%s", path);
+                    printf("Enter search pattern: ");
+                    scanf("%s", pattern);
+                    findFiles(path, pattern);
+                }else
                     printf("Invalid Input\n");
                 break;
             case 0:
